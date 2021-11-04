@@ -9,7 +9,8 @@
       "request": "launch",
       "name": "Launch Program",
       "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}/3-Debugging/app.js",
+      "program": "${workspaceFolder}/4-script/app test",
+      "args": ["test"],
       "runtimeExecutable": "nodemon",
       "restart": true
     }
