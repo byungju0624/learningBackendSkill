@@ -6,7 +6,7 @@ app.use(express.json());
 app.post(
   "/users",
   body("name")
-    .trim()
+    .trim()//공백제거
     .notEmpty()
     .withMessage("이름을 입력해주세요")
     .isLength({ min: 2 })
