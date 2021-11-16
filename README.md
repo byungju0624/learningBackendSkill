@@ -202,3 +202,5 @@
 >        - TYPEORM, Sequelize, Prisma가 있다.
 >      - ODM(Object Document Mapper)
 >        - 우리가 실제 데이터베이스를 읽고 쓰기 어려워도 한단계 추상화된 편리한 API를 제공하면서 그 API를 통해서 데이터 베이스에 접속하고 읽고 쓰고 할 수 있다.
+
+
