@@ -1,11 +1,18 @@
-import mysql from "mysql2";
+import MongoDB from "mongodb";
 import { config } from "../config.js";
+let db;
 
-const pool = mysql.createPool({
-  host: config.db.host,
-  user: config.db.user,
-  database: config.db.databse,
-  password: config.db.password,
-});
+export async function connectDB() {
+  return MongoDB.MongoClient.connect(config.db.host) //
+    .then((client) => {
+      db = client.db();
+    });
+}
 
-export const db = pool.promise();
+export function getUsers() {
+  return db.collection("users");
+}
+
+export function getTweets() {
+  return db.collection("tweets");
+}
