@@ -1,3 +1,4 @@
+// import { db } from "../db/database.js";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -7,38 +8,30 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-let users = [
-    {
-        id: "1",
-        username: "bob",
-        password: "$2b$12$G9xf8SFq3oTEgdj7ozHQ/uhDOyeQcUEDU8tnOcvpvApuadr3nE5Vm",
-        name: "Bob",
-        email: "bob@gmail.com",
-        url: "https://widgetwhats.com/app/uploads/2019/11/free-profile-photo-whatsapp-1.png",
-    },
-    {
-        id: "2",
-        username: "ellie",
-        password: "$2b$12$G9xf8SFq3oTEgdj7ozHQ/uhDOyeQcUEDU8tnOcvpvApuadr3nE5Vm",
-        name: "Ellie",
-        email: "ellie@gmail.com",
-    },
-];
+import { getUsers } from "../db/database.js";
+import MongoDb from "mongodb";
 export function findByUsername(username) {
     return __awaiter(this, void 0, void 0, function* () {
-        return users.find((user) => user.username === username);
+        return getUsers()
+            .findOne({ username }) //
+            .then(mapOptionalUser);
     });
 }
 export function findById(id) {
     return __awaiter(this, void 0, void 0, function* () {
-        return users.find((user) => user.id === id);
+        return getUsers()
+            .findOne({ _id: new MongoDb.ObjectId(id) })
+            .then(mapOptionalUser);
     });
 }
 export function createUser(user) {
     return __awaiter(this, void 0, void 0, function* () {
-        const created = Object.assign(Object.assign({}, user), { id: Date.now().toString() });
-        users.push(created);
-        return created.id;
+        return getUsers()
+            .insertOne(user)
+            .then((data) => data.insertedId.toString());
     });
+}
+function mapOptionalUser(user) {
+    return user ? Object.assign(Object.assign({}, user), { id: user._id.toString() }) : user;
 }
 //# sourceMappingURL=auth.js.map

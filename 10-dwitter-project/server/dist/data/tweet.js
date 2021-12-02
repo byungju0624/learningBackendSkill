@@ -1,3 +1,4 @@
+// import { db } from "../db/database.js";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -7,68 +8,65 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import * as userRepository from "./auth.js";
-let tweets = [
-    {
-        id: "1",
-        text: "드림코더분들 화이팅!",
-        createdAt: new Date(),
-        userId: "1",
-    },
-    {
-        id: "2",
-        text: "안뇽!",
-        createdAt: new Date(),
-        userId: "1",
-    },
-];
+import { getTweets } from "../db/database.js";
+import * as userRepository from "../data/auth.js";
+import MongoDb from "mongodb";
 export function getAll() {
     return __awaiter(this, void 0, void 0, function* () {
-        return Promise.all(tweets.map((tweet) => __awaiter(this, void 0, void 0, function* () {
-            const user = yield userRepository.findById(tweet.userId);
-            return Object.assign(Object.assign({}, tweet), { username: user === null || user === void 0 ? void 0 : user.username, name: user === null || user === void 0 ? void 0 : user.name, url: user === null || user === void 0 ? void 0 : user.url });
-        })));
+        return getTweets() //
+            .find()
+            .sort({ createdAt: -1 })
+            .toArray()
+            .then(mapTweets);
     });
 }
 export function getAllByUsername(username) {
     return __awaiter(this, void 0, void 0, function* () {
-        return getAll().then((tweets) => tweets.filter((tweet) => tweet.username === username));
+        return getTweets() //
+            .find({ username })
+            .sort({ createdAt: -1 })
+            .toArray()
+            .then(mapTweets);
     });
 }
 export function getById(id) {
     return __awaiter(this, void 0, void 0, function* () {
-        const found = tweets.find((tweet) => tweet.id === id);
-        if (!found) {
-            return null;
-        }
-        const user = yield userRepository.findById(found.userId);
-        return Object.assign(Object.assign({}, found), { username: user === null || user === void 0 ? void 0 : user.username, name: user === null || user === void 0 ? void 0 : user.name, url: user === null || user === void 0 ? void 0 : user.url });
+        return getTweets().findOne({ _id: MongoDb.ObjectId(id) });
     });
 }
 export function create(text, userId) {
     return __awaiter(this, void 0, void 0, function* () {
+        const { name, username, url } = yield userRepository.findById(userId);
         const tweet = {
-            id: new Date().toString(),
             text,
             createdAt: new Date(),
             userId,
+            name,
+            username,
+            url,
         };
-        tweets = [tweet, ...tweets];
-        return (yield getById(tweet.id));
+        return getTweets()
+            .insertOne(tweet)
+            .then((data) => mapOtionalTweet(Object.assign(Object.assign({}, tweet), { _id: data.insertedId })));
     });
 }
 export function update(id, text) {
     return __awaiter(this, void 0, void 0, function* () {
-        const tweet = tweets.find((tweet) => tweet.id === id);
-        if (tweet) {
-            tweet.text = text;
-        }
-        return getById(id);
+        return getTweets() //
+            .findOneAndUpdate({ _id: MongoDb.ObjectId(id) }, { $set: { text } }, { returnDocument: "after" })
+            .then((result) => result.value)
+            .then(mapOtionalTweet);
     });
 }
 export function remove(id) {
     return __awaiter(this, void 0, void 0, function* () {
-        tweets = tweets.filter((tweet) => tweet.id !== id);
+        return getTweets().deleteOne({ _id: MongoDb.ObjectId(id) });
     });
+}
+function mapOtionalTweet(tweet) {
+    return tweet ? Object.assign(Object.assign({}, tweet), { id: tweet._id.toString() }) : tweet;
+}
+function mapTweets(tweets) {
+    return tweets.map(mapOtionalTweet);
 }
 //# sourceMappingURL=tweet.js.map
