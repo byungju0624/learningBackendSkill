@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app"
+    "start": "concurrently \"tsc -w\" \"nodemon dist/app\""
   },
   "author": "Dream Coding Academy",
   "license": "ISC",
@@ -20,10 +20,10 @@
     "helmet": "^4.6.0",
     "jsonwebtoken": "^8.5.1",
     "morgan": "^1.10.0",
-    "mysql2": "^2.2.5",
     "socket.io": "^4.1.2"
   },
   "devDependencies": {
-    "nodemon": "^2.0.7"
+    "concurrently": "^6.4.0",
+    "nodemon": "^2.0.15"
   }
 }
