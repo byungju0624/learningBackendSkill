@@ -16,13 +16,17 @@
     "dotenv": "^9.0.2",
     "express": "^4.17.1",
     "express-async-errors": "^3.1.1",
+    "express-openapi-validator": "^4.13.4",
     "express-validator": "^6.11.1",
     "helmet": "^4.6.0",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.1.4",
+    "mongoose": "^6.0.13",
     "morgan": "^1.10.0",
     "mysql2": "^2.2.5",
-    "socket.io": "^4.1.2"
+    "socket.io": "^4.1.2",
+    "swagger-ui-express": "^4.2.0",
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.7"

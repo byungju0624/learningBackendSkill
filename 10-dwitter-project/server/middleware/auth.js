@@ -20,6 +20,25 @@ export const isAuth = async (req, res, next) => {
       return res.status(401).json(AUTH_ERROR);
     }
     req.userId = user.id; // req.customData
+    req.token = token;
     next();
   });
+};
+
+export const authHandler = async (req) => {
+  const authHeader = req.get("Authorization");
+  const token = authHeader.split(" ")[1];
+  try {
+    const decoded = jwt.verify(token, config.jwt.secretKey);
+    const user = await userRepository.findById(decoded.id);
+    if (!user) {
+      throw { status: 401, ...AUTH_ERROR };
+    }
+    req.userId = user.id;
+    req.token = decoded;
+    return true;
+  } catch (err) {
+    console.log(err);
+    throw { status: 401, ...AUTH_ERROR };
+  }
 };
